@@ -1,0 +1,107 @@
+version: '3.8'
+
+services:
+  db-mysql:
+    image: mysql:8.0
+    container_name: db-mysql
+    environment:
+      MYSQL_DATABASE: db_ventas
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: modeltoys
+      MYSQL_ROOT_PASSWORD: modeltoys
+    ports:
+      - "3306:3306"
+    networks:
+      - modeltoys-network
+    # --- ESTO ESPERA A QUE MYSQL ESTÉ LISTO ---
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  ms-discovery:
+    build: ./ms-discovery
+    container_name: ms-discovery
+    ports:
+      - "8761:8761"
+    networks:
+      - modeltoys-network
+
+  ms-ventas:
+    build: ./ms-ventas
+    container_name: ms-ventas
+    depends_on:
+      db-mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-mysql:3306/db_ventas?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: modeltoys
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://ms-discovery:8761/eureka/
+    ports:
+      - "8087:8087"
+    networks:
+      - modeltoys-network
+
+  # ... (tus otros servicios como ms-catalogo e ms-inventario aquí) ...
+
+  ms-carrito:
+    build: ./ms-carrito
+    container_name: ms-carrito
+    depends_on:
+      db-mysql:
+        condition: service_healthy
+    environment:
+      # --- AGREGADO: Credenciales para que ms-carrito pueda conectar ---
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-mysql:3306/db_ventas?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: modeltoys
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://ms-discovery:8761/eureka/
+    ports:
+      - "8086:8086"
+    networks:
+      - modeltoys-network
+
+  # Microservicio de Catalogo
+  ms-catalogo:
+    build: ./ms-catalogo
+    container_name: ms-catalogo
+    depends_on:
+      - ms-discovery
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://ms-discovery:8761/eureka/
+    ports:
+      - "8084:8084"
+    networks:
+      - modeltoys-network
+
+  # Microservicio de Inventario
+  ms-inventario:
+    build: ./ms-inventario
+    container_name: ms-inventario
+    depends_on:
+      - ms-discovery
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://ms-discovery:8761/eureka/
+    ports:
+      - "8082:8082"
+    networks:
+      - modeltoys-network
+
+  # Gateway (La puerta de entrada)
+  ms-gateway:
+    build: ./ms-gateway
+    container_name: ms-gateway
+    depends_on:
+      - ms-discovery
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://ms-discovery:8761/eureka/
+    ports:
+      - "8090:8090"
+    networks:
+      - modeltoys-network
+
+networks:
+  modeltoys-network:
+    driver: bridge

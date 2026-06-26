@@ -1,0 +1,22 @@
+server:
+  port: 8087
+
+spring:
+  application:
+    name: ms-ventas
+  datasource:
+    url: jdbc:mysql://db-mysql:3306/db_ventas?allowPublicKeyRetrieval=true&useSSL=false
+    username: admin
+    password: modeltoys
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true

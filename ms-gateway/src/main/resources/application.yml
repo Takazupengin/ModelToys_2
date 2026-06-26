@@ -1,0 +1,18 @@
+server:
+  port: 8090 # Lo cambiamos a 8090 para que no choque con el Inventario
+
+spring:
+  application:
+    name: ms-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true # Esto es vital: le dice al Gateway que mire a Eureka para encontrar a los otros servicios
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
