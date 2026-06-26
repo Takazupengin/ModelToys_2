@@ -10,3 +10,5 @@ Error 2: Conflicto con Swagger y HATEOAS al estar juntos.
 
 Error 3: Error con el Datafacker
         - De la misma manera que el HATEOAS, nos arrojaba error con la version del datafacker, la cual se redujo a la 2.2.2, y tambien rara vez, pero dio, daba error con el import como tal.
+
+Solucion de errores: Se corrigieron los errores correspondientes y se adjunto todo al documento previo.
