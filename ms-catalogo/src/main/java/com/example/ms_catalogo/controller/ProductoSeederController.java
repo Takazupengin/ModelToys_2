@@ -19,11 +19,10 @@ import java.util.Locale;
 public class ProductoSeederController {
 
     @Autowired
-    private ProductRepository productRepository; // Ajustado a "Product" según tu arquitectura
+    private ProductRepository productRepository;
 
     @GetMapping
     public ResponseEntity<String> sembrarDatos() {
-        // Inicializamos Faker en español para nombres geniales
         Faker faker = new Faker(new Locale("es"));
         List<Product> productosFalsos = new ArrayList<>();
 
@@ -36,13 +35,11 @@ public class ProductoSeederController {
             p.setName("Figura " + modeloRandom + " - Edición Especial");
             p.setGrade("Premium PVC");
 
-            // Precios coherentes entre $15.000 y $85.000 CLP
             p.setPrice(faker.number().randomDouble(0, 15000, 85000));
 
             productosFalsos.add(p);
         }
 
-        // Se guardan todos de un viaje en tu Laragon (y mañana en AWS)
         productRepository.saveAll(productosFalsos);
 
         return ResponseEntity.ok("🎲 ¡Éxito! Se han sembrado 20 figuras coleccionables aleatorias en tu base de datos.");
