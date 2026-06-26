@@ -1,4 +1,4 @@
-package com.example.ms_catalogo.config; // Asegúrate de que use tu package real
+package com.example.ms_catalogo.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
