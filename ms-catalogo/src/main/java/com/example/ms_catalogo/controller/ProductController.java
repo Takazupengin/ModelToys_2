@@ -37,6 +37,12 @@ public class ProductController {
 
         return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
+        return productService.getProductById(id)
+                .map(producto -> new ResponseEntity<>(producto, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<Product> actualizarProducto(@PathVariable Long id, @Valid @RequestBody ProductDTO productDTO) {
