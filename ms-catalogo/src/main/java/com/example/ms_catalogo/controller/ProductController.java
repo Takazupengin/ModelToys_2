@@ -51,11 +51,8 @@ public class ProductController {
                     productoExistente.setName(productDTO.getName());
                     productoExistente.setGrade(productDTO.getGrade());
                     productoExistente.setPrice(productDTO.getPrice());
-                    // Guardamos solo los datos comerciales en la BD de catálogo
                     Product guardado = productService.saveProduct(productoExistente);
 
-                    // NOTA PARA LA DEFENSA: Aquí es donde a futuro se mete el FeignClient
-                    // para mandarle el productDTO.getStock() al ms-inventario de forma remota.
 
                     return new ResponseEntity<>(guardado, HttpStatus.OK);
                 })
